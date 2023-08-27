@@ -16,9 +16,6 @@ Choosing courses amongst the existing courses based upon year
 Displaying the selected course
 
 DataBase Design
- Entity-Relationship Diagram (ERD)
-[Insert ERD Diagram Here]
-Database Schema
 
 Student Entity
 	- Attributes:
