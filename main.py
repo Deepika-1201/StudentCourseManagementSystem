@@ -89,7 +89,7 @@ def authentication_page():
                     # Generate a JWT token upon successful login
                     token_payload = {
                         "username": username,
-                        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1)  # Token expiration time
+                        "exp": datetime.datetime.utcnow() + datetime.timedelta(seconds=5)  # Token expiration time
                     }
                     token = jwt.encode(token_payload, SECRET_KEY, algorithm="HS256")
                     st.session_state.token = token  # Store the token in the session state
@@ -108,6 +108,7 @@ def course_selection_page():
         if "token" not in st.session_state:
             raise AuthenticationError("Please log in to continue")
 
+        verify_token(st.session_state.token)
         username = jwt.decode(st.session_state.token, SECRET_KEY, algorithms=["HS256"])["username"]
 
         student = get_student(username)
@@ -166,6 +167,10 @@ def main():
 def verify_token(token):
     try:
         jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        currTime = int(datetime.datetime.utcnow().timestamp())
+        loginTime = jwt.decode(st.session_state.token, SECRET_KEY, algorithms=["HS256"])["exp"]
+        if currTime >= loginTime:
+           raise AuthenticationError("Token has expired. Please log in again.")
         return True
     except jwt.ExpiredSignatureError:
         raise AuthenticationError("Token has expired. Please log in again.")
