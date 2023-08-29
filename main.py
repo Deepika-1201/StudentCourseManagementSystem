@@ -135,6 +135,8 @@ def course_display_page():
 
         if "token" not in st.session_state:
             raise AuthenticationError("Please log in to continue")
+        
+        verify_token(st.session_state.token)
 
         username = jwt.decode(st.session_state.token, SECRET_KEY, algorithms=["HS256"])["username"]
 
